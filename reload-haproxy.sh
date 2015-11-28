@@ -1,3 +1,3 @@
-#!/bin/bash
+#!/bin/sh
 
-/usr/local/sbin/haproxy -f /etc/haproxy.cfg -p /var/run/haproxy.pid -sf $(cat /var/run/haproxy.pid)
+/usr/sbin/haproxy -f /etc/haproxy.cfg -p /var/run/haproxy.pid -sf $(< /var/run/haproxy.pid)

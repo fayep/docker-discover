@@ -1,14 +1,14 @@
-FROM ubuntu:14.04
+FROM alpine
 
-RUN apt-get update
-RUN apt-get install -y wget make gcc binutils python-pip python-dev libssl-dev libffi-dev bash
+RUN apk update
+RUN apk add haproxy py-pip
 
 WORKDIR /root
 
-RUN wget http://www.haproxy.org/download/1.5/src/haproxy-1.5.1.tar.gz
-RUN tar -zxvf haproxy-1.5.1.tar.gz
+#RUN wget http://www.haproxy.org/download/1.5/src/haproxy-1.5.1.tar.gz
+#RUN tar -zxvf haproxy-1.5.1.tar.gz
 
-RUN cd haproxy-1.5.1 && make TARGET=generic && make install
+#RUN cd haproxy-1.5.1 && make TARGET=generic && make install
 
 RUN pip install python-etcd Jinja2
 RUN touch /var/run/haproxy.pid

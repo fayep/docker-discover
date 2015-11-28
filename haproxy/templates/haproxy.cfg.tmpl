@@ -19,9 +19,30 @@ listen stats :1936
     stats uri /
     #stats auth Username:Password
 
+frontend http-in
+    bind *:80
+    mode http
 {% for service in services %}
-listen {{ service }}
-    bind *:{{services[service].port}}
+    acl is_{{ service }} hdr_beg(host) -i {{ service }}.
+    use_backend {{ service }}_backend_http if is_{{ service }}
+{% endfor %}
+
+{% for service in services %}
+frontend {{ service }}
+    bind *:{{ services[service].port }}
+    mode tcp
+    use_backend {{ service }}_backend_tcp
+{% endfor %}
+
+{% for service in services %}
+backend {{ service }}_backend_tcp
+    balance roundrobin
+    mode tcp
+    {% for backend in services[service].backends %}
+    server {{ backend.name }} {{ backend.addr }} check inter 2s rise 3 fall 2{% endfor %}
+backend {{ service }}_backend_http
+    balance roundrobin
+    mode http
     {% for backend in services[service].backends %}
     server {{ backend.name }} {{ backend.addr }} check inter 2s rise 3 fall 2{% endfor %}
 {% endfor %}
